@@ -1,7 +1,10 @@
 package jpaDto;
 
 import jakarta.persistence.*;
+import metier.Adresse;
 import metier.Bien;
+import metier.CategorieBien;
+import metier.TypeBien;
 
 import java.util.Date;
 
@@ -69,7 +72,22 @@ public class E_Bien {
     }
 
     public Bien getMetier() {
-        return new Bien(this.id, this.type.getMetier(), this.categorie.getMetier(), this.adresse.getMetier(), this.surfaceHabitable, this.nbrPieces, this.description, this.commentaireAgence, this.noAppartement, this.etage, this.dateCreation, this.dateDerniereMaj);
+        TypeBien typeBien = null;
+        if (this.type != null) {
+            typeBien = this.type.getMetier();
+        }
+
+        CategorieBien categorieBien = null;
+        if (this.categorie != null) {
+            categorieBien = this.categorie.getMetier();
+        }
+
+        Adresse adresse = null;
+        if (this.adresse != null) {
+            adresse = this.adresse.getMetier();
+        }
+
+        return new Bien(this.id, typeBien, categorieBien, adresse, this.surfaceHabitable, this.nbrPieces, this.description, this.commentaireAgence, this.noAppartement, this.etage, this.dateCreation, this.dateDerniereMaj);
     }
 
     @Override

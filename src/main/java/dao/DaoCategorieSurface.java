@@ -1,9 +1,9 @@
 package dao;
 
-import jpaDto.E_CategorieBien;
+import metier.CategorieBien;
 
-public interface DaoCategorieSurface extends Dao<E_CategorieBien> {
-    public E_CategorieBien findLibCategorieSurface(String lib);
-    public E_CategorieBien find(int id);
+public interface DaoCategorieSurface extends Dao<CategorieBien> {
+    public CategorieBien findLibCategorieSurface(String lib);
+    public CategorieBien find(int id);
 }
 

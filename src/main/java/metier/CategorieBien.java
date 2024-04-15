@@ -20,4 +20,12 @@ public class CategorieBien {
     public void setLib(String lib) {
         this.lib = lib;
     }
+
+    @Override
+    public String toString() {
+        return "CategorieBien{" +
+                "id=" + id +
+                ", lib='" + lib + '\'' +
+                '}';
+    }
 }

@@ -1,11 +1,11 @@
 package dao;
 
-import jpaDto.E_Adresse;
-import jpaDto.E_Bien;
+import metier.Adresse;
+import metier.Bien;
 
 import java.util.List;
 
-public interface DaoBien extends Dao<E_Bien> {
-    public E_Bien find(int id);
-    public List<E_Bien> findByAdresse(E_Adresse adresse);
+public interface DaoBien extends Dao<Bien> {
+    public Bien find(int id);
+    public List<Bien> findByAdresse(Adresse adresse);
 }

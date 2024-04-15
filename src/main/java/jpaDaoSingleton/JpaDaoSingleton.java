@@ -1,12 +1,11 @@
 package jpaDaoSingleton;
 
-import dao.Dao;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class JpaDaoSingleton<T> implements Dao<T> {
+public abstract class JpaDaoSingleton<T> {
     private static final String persistenceUnitName = "default";
     protected final EntityManager entityManager;
     private final EntityManagerFactory entityManagerFactory;
@@ -18,29 +17,32 @@ public abstract class JpaDaoSingleton<T> implements Dao<T> {
         this.entityTransaction = this.entityManager.getTransaction();
     }
 
-    public boolean create(T obj) {
+    protected boolean createEntity(T entity) {
         try {
             this.entityTransaction.begin();
-            this.entityManager.persist(obj);
+            this.entityManager.merge(entity); // merge au lieu de persist pour éviter les erreurs d'entités détachées
+//            this.entityManager.persist(entity);
             this.entityTransaction.commit();
         } catch (Exception e) {
+            System.out.println("Erreur lors de la création de l'entité");
+            System.out.println(e.getMessage());
             return false;
         }
         return true;
     }
 
-    public T find(Class<T> c, int id) {
+    protected T findEntity(Class<T> c, int id) {
         try {
             this.entityTransaction.begin();
-            T obj = this.entityManager.find(c, id);
+            T entity = this.entityManager.find(c, id);
             this.entityTransaction.commit();
-            return obj;
+            return entity;
         } catch (Exception e) {
             return null;
         }
     }
 
-    public List<T> findAll(Class<T> c) {
+    protected List<T> findAllEntities(Class<T> c) {
         try {
             this.entityTransaction.begin();
             String queryString = "SELECT e FROM " + c.getSimpleName() + " e";
@@ -53,10 +55,10 @@ public abstract class JpaDaoSingleton<T> implements Dao<T> {
         }
     }
 
-    public boolean update(T obj) {
+    protected boolean updateEntity(T entity) {
         try {
             this.entityTransaction.begin();
-            this.entityManager.merge(obj);
+            this.entityManager.merge(entity);
             this.entityTransaction.commit();
         } catch (Exception e) {
             return false;
@@ -64,10 +66,10 @@ public abstract class JpaDaoSingleton<T> implements Dao<T> {
         return true;
     }
 
-    public boolean delete(T obj) {
+    protected boolean deleteEntity(T entity) {
         try {
             this.entityTransaction.begin();
-            this.entityManager.detach(obj);
+            this.entityManager.detach(entity);
             this.entityTransaction.commit();
         } catch (Exception e) {
             return false;
@@ -75,7 +77,7 @@ public abstract class JpaDaoSingleton<T> implements Dao<T> {
         return true;
     }
 
-    public boolean deleteAll(Class<T> c) {
+    protected boolean deleteAllEntities(Class<T> c) {
         try {
             this.entityTransaction.begin();
             String queryString = "DELETE FROM " + c.getSimpleName() + " e";

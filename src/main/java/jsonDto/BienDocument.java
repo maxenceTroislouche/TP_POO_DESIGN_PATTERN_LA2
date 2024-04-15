@@ -1,6 +1,9 @@
 package jsonDto;
 
+import metier.Adresse;
 import metier.Bien;
+import metier.CategorieBien;
+import metier.TypeBien;
 import org.bson.Document;
 
 import java.math.BigDecimal;
@@ -8,10 +11,25 @@ import java.math.BigDecimal;
 public class BienDocument extends Document {
 
     public BienDocument(Bien bien) {
+        TypeBienDocument typeBienDocument = null;
+        if (bien.getTypeBien() != null) {
+            typeBienDocument = new TypeBienDocument(bien.getTypeBien());
+        }
+
+        CategorieBienDocument categorieBienDocument = null;
+        if (bien.getCategorieBien() != null) {
+            categorieBienDocument = new CategorieBienDocument(bien.getCategorieBien());
+        }
+
+        AdresseDocument adresseDocument = null;
+        if (bien.getAdresse() != null) {
+            adresseDocument = new AdresseDocument(bien.getAdresse());
+        }
+
         this.append("id", bien.getId())
-                .append("typeBien", new TypeBienDocument(bien.getTypeBien()))
-                .append("categorieBien", new CategorieBienDocument(bien.getCategorieBien()))
-                .append("adresse", new AdresseDocument(bien.getAdresse()))
+                .append("typeBien", typeBienDocument)
+                .append("categorieBien", categorieBienDocument)
+                .append("adresse", adresseDocument)
                 .append("surfaceHabitable", bien.getSurfaceHabitable())
                 .append("nbrPieces", bien.getNbrPieces())
                 .append("description", bien.getDescription())
@@ -23,10 +41,25 @@ public class BienDocument extends Document {
     }
 
     public BienDocument(Document document) {
+        TypeBienDocument typeBienDocument = null;
+        if (document.get("typeBien") != null) {
+            typeBienDocument = new TypeBienDocument((Document) document.get("typeBien"));
+        }
+
+        CategorieBienDocument categorieBienDocument = null;
+        if (document.get("categorieBien") != null) {
+            categorieBienDocument = new CategorieBienDocument((Document) document.get("categorieBien"));
+        }
+
+        AdresseDocument adresseDocument = null;
+        if (document.get("adresse") != null) {
+            adresseDocument = new AdresseDocument((Document) document.get("adresse"));
+        }
+
         this.append("id", document.getInteger("id"))
-                .append("typeBien", new TypeBienDocument((Document) document.get("typeBien")))
-                .append("categorieBien", new CategorieBienDocument((Document) document.get("categorieBien")))
-                .append("adresse", new AdresseDocument((Document) document.get("adresse")))
+                .append("typeBien", typeBienDocument)
+                .append("categorieBien", categorieBienDocument)
+                .append("adresse", adresseDocument)
                 .append("surfaceHabitable", document.getDouble("surfaceHabitable"))
                 .append("nbrPieces", document.getInteger("nbrPieces"))
                 .append("description", document.getString("description"))
@@ -38,11 +71,29 @@ public class BienDocument extends Document {
     }
 
     public Bien getMetier() {
+        TypeBienDocument typeBienDocument = (TypeBienDocument) this.get("typeBien");
+        TypeBien typeBien = null;
+        if (typeBienDocument != null) {
+            typeBien = typeBienDocument.getMetier();
+        }
+
+        CategorieBienDocument categorieBienDocument = (CategorieBienDocument) this.get("categorieBien");
+        CategorieBien categorieBien = null;
+        if (categorieBienDocument != null) {
+            categorieBien = categorieBienDocument.getMetier();
+        }
+
+        AdresseDocument adresseDocument = (AdresseDocument) this.get("adresse");
+        Adresse adresse = null;
+        if (adresseDocument != null) {
+            adresse = adresseDocument.getMetier();
+        }
+
         return new Bien(
                 this.getInteger("id"),
-                ((TypeBienDocument) this.get("typeBien")).getMetier(),
-                ((CategorieBienDocument) this.get("categorieBien")).getMetier(),
-                ((AdresseDocument) this.get("adresse")).getMetier(),
+                typeBien,
+                categorieBien,
+                adresse,
                 // Pas sur que ça soit la meilleure façon de récupérer un float :/
                 // https://stackoverflow.com/questions/26906984/how-to-get-float-value-from-json
                 BigDecimal.valueOf(this.getDouble("surfaceHabitable")).floatValue(),

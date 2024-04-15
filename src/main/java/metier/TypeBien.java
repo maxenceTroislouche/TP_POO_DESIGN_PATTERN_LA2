@@ -20,4 +20,12 @@ public class TypeBien {
     public void setLib(String lib) {
         this.lib = lib;
     }
+
+    @Override
+    public String toString() {
+        return "TypeBien{" +
+                "id=" + id +
+                ", lib='" + lib + '\'' +
+                '}';
+    }
 }

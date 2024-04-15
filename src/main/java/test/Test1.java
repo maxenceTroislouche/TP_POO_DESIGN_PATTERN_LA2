@@ -1,59 +1,58 @@
 package test;
 
 
-import dao.DaoAdresse;
-import dao.DaoBien;
-import dao.DaoCategorieSurface;
-import dao.DaoTypeBien;
-import jpaDao.JpaDaoAdresse;
-import jpaDao.JpaDaoBien;
-import jpaDao.JpaDaoCategorieSurface;
-import jpaDao.JpaDaoTypeBien;
-import jpaDto.E_Adresse;
-import jpaDto.E_Bien;
-import jpaDto.E_CategorieBien;
-import jpaDto.E_TypeBien;
+import dao.*;
+import jakarta.transaction.Transactional;
+import metier.Adresse;
 
 public class Test1 {
+    @Transactional
+    public static Adresse getAdresse(int id, PersistenceType type) {
+        return DaoFactory.getDaoFactory(type).getDaoAdresse().find(id);
+    }
+
+    @Transactional
+    public static int getNombreBiens(Adresse adresse, PersistenceType type) {
+        return DaoFactory.getDaoFactory(type).getDaoAdresse().nombreBiens(adresse);
+    }
+
+    @Transactional
+    public static boolean createAdresse(Adresse adresse, PersistenceType type) {
+        return DaoFactory.getDaoFactory(type).getDaoAdresse().create(adresse);
+    }
+
+    @Transactional
+    public static boolean updateAdresse(Adresse adresse, PersistenceType type) {
+        return DaoFactory.getDaoFactory(type).getDaoAdresse().update(adresse);
+    }
+
     public static void main(String[] args) {
-        DaoAdresse adresseManager = new JpaDaoAdresse();
-        E_Adresse chezMoi = adresseManager.find(5);
-        if (chezMoi != null)
-            System.out.println("Chez moi : "+chezMoi.toString()+" il y a "+adresseManager.nombreBiens(chezMoi));
-        else
-            System.out.println("Flute, adresse non trouvée !");
+        // Recherche d'une adresse
+        Adresse adresseJPA = getAdresse(5, PersistenceType.JPA);
+        Adresse adresseJSON = getAdresse(5, PersistenceType.JSON);
 
-        // recherche des biens à cette adresse
-        System.out.println("les biens de l'adresse N°1 : "+adresseManager.biensACetteAdresse(adresseManager.find(1)).toString());
-        System.out.println("les biens de l'adresse N°5 : "+adresseManager.biensACetteAdresse(adresseManager.find(5)).toString());
+        System.out.println("Adresse JPA : "+adresseJPA);
+        System.out.println("Adresse JSON : "+adresseJSON);
 
-        // Création d'un nouveau Bien
-        DaoTypeBien typeBienManager = new JpaDaoTypeBien();
-        E_TypeBien appartement = typeBienManager.findLibTypeBien("APPARTEMENT");
+        // Nombre de biens à cette adresse
+        System.out.println("Nombre de biens à l'adresse 5 JPA : " + getNombreBiens(adresseJPA, PersistenceType.JPA));
+        System.out.println("Nombre de biens à l'adresse 5 JSON : " + getNombreBiens(adresseJSON, PersistenceType.JSON));
 
-        DaoCategorieSurface categorieSurfaceManager = new JpaDaoCategorieSurface();
-        E_CategorieBien studio = categorieSurfaceManager.findLibCategorieSurface("STUDIO");
+        // Création d'une nouvelle adresse
+        Adresse nouvelleAdresse = new Adresse(6, "rue", "Jean Souvraz", "62300", "Lille");
 
-        E_Bien chezToi = new E_Bien();
-        chezToi.setType(appartement);
-        chezToi.setAdresse(chezMoi);
-        chezToi.setCategorie(studio);
-        chezToi.setSurfaceHabitable(30.0f);
+        createAdresse(nouvelleAdresse, PersistenceType.JPA);
+        createAdresse(nouvelleAdresse, PersistenceType.JSON);
 
-        DaoBien BienManager = new JpaDaoBien();
-        BienManager.create(chezToi);
-        System.out.println(chezToi);
+        System.out.println("Adresse créée JPA : " + getAdresse(6, PersistenceType.JPA));
+        System.out.println("Adresse créée JSON : " + getAdresse(6, PersistenceType.JSON));
 
-        DaoBien BienManager2 = new JpaDaoBien();
-        E_Bien unLogement = new E_Bien();
-        unLogement.setType(appartement);
-        unLogement.setAdresse(chezMoi);
-        unLogement.setSurfaceHabitable(100.0f);
+        // Modification d'une adresse
+        nouvelleAdresse.setVille("Lens");
+        updateAdresse(nouvelleAdresse, PersistenceType.JPA);
+        updateAdresse(nouvelleAdresse, PersistenceType.JSON);
 
-        BienManager.create(unLogement);
-        BienManager2.create(unLogement);
-
-        System.out.println("Nombre de  biens en base BienManager : "+BienManager.findAll(E_Bien.class).size());
-        System.out.println("Nombre de  biens en base BienManager2: "+BienManager2.findAll(E_Bien.class).size());
+        System.out.println("Adresse modifiée JPA : " + getAdresse(6, PersistenceType.JPA));
+        System.out.println("Adresse modifiée JSON : " + getAdresse(6, PersistenceType.JSON));
     }
 }

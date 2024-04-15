@@ -50,4 +50,15 @@ public class Adresse {
     public void setVille(String ville) {
         this.ville = ville;
     }
+
+    @Override
+    public String toString() {
+        return "Adresse{" +
+                "id=" + id +
+                ", typeVoie='" + typeVoie + '\'' +
+                ", nomVoie='" + nomVoie + '\'' +
+                ", codePostal='" + codePostal + '\'' +
+                ", ville='" + ville + '\'' +
+                '}';
+    }
 }

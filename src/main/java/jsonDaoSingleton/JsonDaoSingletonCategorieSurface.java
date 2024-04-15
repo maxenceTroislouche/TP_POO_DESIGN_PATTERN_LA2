@@ -1,64 +1,88 @@
 package jsonDaoSingleton;
 
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
 import dao.DaoCategorieSurface;
-import jakarta.persistence.TypedQuery;
 import jpaDto.E_CategorieBien;
-
+import jsonDto.CategorieBienDocument;
+import metier.CategorieBien;
+import org.bson.Document;
+import java.util.ArrayList;
 import java.util.List;
 
 public class JsonDaoSingletonCategorieSurface extends JsonDaoSingleton<E_CategorieBien> implements DaoCategorieSurface {
-    @Override
-    public E_CategorieBien findLibCategorieSurface(String lib) {
-        return null;
+
+    private MongoCollection<Document> getCollection() {
+        return this.database.getCollection("categorie_bien");
     }
 
     @Override
-    public E_CategorieBien find(int id) {
-        return null;
+    public CategorieBien findLibCategorieSurface(String lib) {
+        MongoCollection<Document> collection = this.getCollection();
+
+        CategorieBienDocument categorieBienDocument = (CategorieBienDocument) collection.find(Filters.eq("lib", lib)).first();
+        if (categorieBienDocument == null) {
+            return null;
+        }
+        return categorieBienDocument.getMetier();
+    }
+
+    @Override
+    public CategorieBien find(int id) {
+        MongoCollection<Document> collection = this.getCollection();
+        CategorieBienDocument categorieBienDocument = (CategorieBienDocument) collection.find(Filters.eq("id", id)).first();
+        if (categorieBienDocument == null) {
+            return null;
+        }
+        return categorieBienDocument.getMetier();
+    }
+
+    @Override
+    public boolean create(CategorieBien obj) {
+        MongoCollection<Document> collection = this.getCollection();
+        collection.insertOne(new CategorieBienDocument(obj));
+        return true;
+    }
+
+    @Override
+    public CategorieBien find(Class<CategorieBien> c, int id) {
+        return this.find(id);
+    }
+
+    @Override
+    public List<CategorieBien> findAll(Class<CategorieBien> c) {
+        MongoCollection<Document> collection = this.getCollection();
+        List<CategorieBien> returnList = new ArrayList<>();
+        for (Document document : collection.find()) {
+            returnList.add(((CategorieBienDocument) document).getMetier());
+        }
+        return returnList;
+    }
+
+    @Override
+    public boolean update(CategorieBien obj) {
+        MongoCollection<Document> collection = this.getCollection();
+        collection.replaceOne(Filters.eq("id", obj.getId()), new CategorieBienDocument(obj));
+        return true;
+    }
+
+    @Override
+    public boolean delete(CategorieBien obj) {
+        MongoCollection<Document> collection = this.getCollection();
+        collection.deleteOne(Filters.eq("id", obj.getId()));
+        return true;
     }
 
     @Override
     public boolean deleteAll() {
-        return false;
+        MongoCollection<Document> collection = this.getCollection();
+        collection.deleteMany(new Document());
+        return true;
     }
 
-    @Override
-    public void close() {
-
-    }
 
     private JsonDaoSingletonCategorieSurface() {
         super();
-    }
-
-    @Override
-    public boolean create(E_CategorieBien obj) {
-        return false;
-    }
-
-    @Override
-    public E_CategorieBien find(Class<E_CategorieBien> c, int id) {
-        return null;
-    }
-
-    @Override
-    public List<E_CategorieBien> findAll(Class<E_CategorieBien> c) {
-        return List.of();
-    }
-
-    @Override
-    public boolean update(E_CategorieBien obj) {
-        return false;
-    }
-
-    @Override
-    public boolean delete(E_CategorieBien obj) {
-        return false;
-    }
-
-    @Override
-    public boolean deleteAll(Class<E_CategorieBien> c) {
-        return false;
     }
 
     private static JsonDaoSingletonCategorieSurface instance;

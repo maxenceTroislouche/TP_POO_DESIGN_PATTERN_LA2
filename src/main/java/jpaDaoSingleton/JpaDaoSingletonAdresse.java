@@ -2,31 +2,71 @@ package jpaDaoSingleton;
 
 import dao.DaoAdresse;
 import jpaDto.E_Adresse;
-import jpaDto.E_Bien;
+import metier.Adresse;
+import metier.Bien;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class JpaDaoSingletonAdresse extends JpaDaoSingleton<E_Adresse> implements DaoAdresse {
+
     @Override
-    public int nombreBiens(E_Adresse adresse) {
-        JpaDaoSingletonBien jpaDaoBien = JpaDaoSingletonBien.getInstance();
-        return jpaDaoBien.findByAdresse(adresse).size();
+    public int nombreBiens(Adresse adresse) {
+        JpaDaoSingletonBien jpaDaoSingletonBien = JpaDaoSingletonBien.getInstance();
+        return jpaDaoSingletonBien.findByAdresse(adresse).size();
     }
 
     @Override
-    public List<E_Bien> biensACetteAdresse(E_Adresse adresse) {
-        JpaDaoSingletonBien jpaDaoBien = JpaDaoSingletonBien.getInstance();
-        return jpaDaoBien.findByAdresse(adresse);
+    public List<Bien> biensACetteAdresse(Adresse adresse) {
+        JpaDaoSingletonBien jpaDaoSingletonBien = JpaDaoSingletonBien.getInstance();
+        return jpaDaoSingletonBien.findByAdresse(adresse);
     }
 
     @Override
-    public E_Adresse find(int id) {
-        return super.find(E_Adresse.class, id);
+    public Adresse find(int id) {
+        E_Adresse adresseEntity = super.findEntity(E_Adresse.class, id);
+        if (adresseEntity == null) {
+            return null;
+        }
+        return adresseEntity.getMetier();
+    }
+
+    @Override
+    public boolean create(Adresse obj) {
+        E_Adresse adresseEntity = (E_Adresse) JpaDaoEntityMapper.getEntityObject(obj);
+        return super.createEntity(adresseEntity);
+    }
+
+    @Override
+    public Adresse find(Class<Adresse> c, int id) {
+        return this.find(id);
+    }
+
+    @Override
+    public List<Adresse> findAll(Class<Adresse> c) {
+        List<E_Adresse> listOfAdresses = super.findAllEntities(E_Adresse.class);
+        List<Adresse> returnList = new ArrayList<>();
+        for (E_Adresse adresse : listOfAdresses) {
+            returnList.add(adresse.getMetier());
+        }
+        return returnList;
+    }
+
+    @Override
+    public boolean update(Adresse obj) {
+        E_Adresse adresseEntity = (E_Adresse) JpaDaoEntityMapper.getEntityObject(obj);
+        return super.updateEntity(adresseEntity);
+    }
+
+    @Override
+    public boolean delete(Adresse obj) {
+        E_Adresse adresseEntity = (E_Adresse) JpaDaoEntityMapper.getEntityObject(obj);
+        return super.deleteEntity(adresseEntity);
     }
 
     @Override
     public boolean deleteAll() {
-        return super.deleteAll(E_Adresse.class);
+        return super.deleteAllEntities(E_Adresse.class);
     }
 
     private JpaDaoSingletonAdresse() {

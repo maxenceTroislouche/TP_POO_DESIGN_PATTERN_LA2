@@ -8,7 +8,7 @@ public class Bien {
     private CategorieBien categorieBien;
     private Adresse adresse;
     private float surfaceHabitable;
-    private int nbrPieces;
+    private Integer nbrPieces;
     private String description;
     private String commentaireAgence;
     private String noAppartement;
@@ -16,7 +16,7 @@ public class Bien {
     private Date dateCreation;
     private Date dateDerniereMaj;
 
-    public Bien(int id, TypeBien typeBien, CategorieBien categorieBien, Adresse adresse, float surfaceHabitable, int nbrPieces, String description, String commentaireAgence, String noAppartement, Integer etage, Date dateCreation, Date dateDerniereMaj) {
+    public Bien(int id, TypeBien typeBien, CategorieBien categorieBien, Adresse adresse, float surfaceHabitable, Integer nbrPieces, String description, String commentaireAgence, String noAppartement, Integer etage, Date dateCreation, Date dateDerniereMaj) {
         this.id = id;
         this.typeBien = typeBien;
         this.categorieBien = categorieBien;
@@ -67,7 +67,7 @@ public class Bien {
         this.surfaceHabitable = surfaceHabitable;
     }
 
-    public int getNbrPieces() {
+    public Integer getNbrPieces() {
         return nbrPieces;
     }
 
@@ -121,5 +121,23 @@ public class Bien {
 
     public void setDateDerniereMaj(Date dateDerniereMaj) {
         this.dateDerniereMaj = dateDerniereMaj;
+    }
+
+    @Override
+    public String toString() {
+        return "Bien{" +
+                "id=" + id +
+                ", typeBien=" + typeBien +
+                ", categorieBien=" + categorieBien +
+                ", adresse=" + adresse +
+                ", surfaceHabitable=" + surfaceHabitable +
+                ", nbrPieces=" + nbrPieces +
+                ", description='" + description + '\'' +
+                ", commentaireAgence='" + commentaireAgence + '\'' +
+                ", noAppartement='" + noAppartement + '\'' +
+                ", etage=" + etage +
+                ", dateCreation=" + dateCreation +
+                ", dateDerniereMaj=" + dateDerniereMaj +
+                '}';
     }
 }
